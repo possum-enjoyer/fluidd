@@ -164,7 +164,7 @@ export const getters: GetterTree<PrinterState, RootState> = {
 
   getTimeEstimates: (state, getters) => {
     const progress = getters.getPrintProgress
-    const endTime = Date.now()
+    const timeStamp = Date.now()
 
     const duration = (
       'print_stats' in state.printer &&
@@ -181,7 +181,7 @@ export const getters: GetterTree<PrinterState, RootState> = {
     if (progress > 0 && duration > 0) {
       file = duration / progress
       fileLeft = (file - duration) / multiplier
-      fileEndTime = endTime + (fileLeft * 1000)
+      fileEndTime = timeStamp + (fileLeft * 1000)
     }
 
     let actualTotal = 0
@@ -194,7 +194,7 @@ export const getters: GetterTree<PrinterState, RootState> = {
     ) {
       actualTotal = state.printer.current_file.history.total_duration
       actualLeft = (actualTotal - duration) / multiplier
-      actualEndTime = endTime + (actualLeft * 1000)
+      actualEndTime = timeStamp + (actualLeft * 1000)
     }
 
     let slicer = 0
@@ -202,11 +202,11 @@ export const getters: GetterTree<PrinterState, RootState> = {
     let slicerEndTime = 0
     if (
       'current_file' in state.printer &&
-      'estimated_time' in state.printer.current_file
+      'estimated_time' in state.printer.current_file && state.printer.current_file.estimated_time > 0
     ) {
       slicer = state.printer.current_file.estimated_time
       slicerLeft = (slicer - duration) / multiplier
-      slicerEndTime = endTime + (slicerLeft * 1000)
+      slicerEndTime = timeStamp + (slicerLeft * 1000)
     }
 
     let eta = fileEndTime
