@@ -209,9 +209,11 @@ export const getters: GetterTree<PrinterState, RootState> = {
       slicerEndTime = timeStamp + (slicerLeft * 1000)
     }
 
-    let eta = fileEndTime
-    if (slicerEndTime > 0) eta = slicerEndTime
-    if (actualEndTime > 0) eta = actualEndTime
+    const sortedTimeStamps = [fileEndTime, slicerEndTime, actualEndTime].sort((a, b) => a - b).filter(t => t > 0)
+    const middle = Math.floor(sortedTimeStamps.length / 2)
+    const eta = middle % 2 === 0
+      ? (sortedTimeStamps[sortedTimeStamps.length - 1] + sortedTimeStamps[middle]) / 2
+      : sortedTimeStamps[middle]
 
     return {
       progress: Math.floor(progress * 100),
